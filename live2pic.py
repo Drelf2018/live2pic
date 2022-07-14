@@ -10,8 +10,8 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from wordcloud import STOPWORDS, WordCloud
 
-LIVELIVE: dict
-FOLDER = 'live/'
+LIVELIVE: dict  # 直播数据
+FOLDER = 'live/'  # live 文件夹相对路径
 Headers = {
     'Connection': 'keep-alive',
     'Accept-Language': 'zh-CN,zh;q=0.9',
@@ -22,6 +22,7 @@ Headers = {
 
 
 async def exface(session: httpx.AsyncClient()) -> Tuple[str, Image.Image]:
+    # 爬取装扮及头像
     resp = await session.get('https://account.bilibili.com/api/member/getCardByMid?mid=434334701', timeout=10.0)
     js = resp.json()
     face = js.get('card', {}).get('face')
@@ -64,6 +65,8 @@ async def exface(session: httpx.AsyncClient()) -> Tuple[str, Image.Image]:
 
 
 async def word2pic(client: httpx.AsyncClient()) -> Tuple[str, Image.Image]:
+    # 弹幕词云
+    # 此处应更改为 matsuri.icu
     resp = await client.get('https://api.drelf.cn/live/21452505/last', timeout=10.0)
     assert resp.status_code == 200
     global LIVEINFO 
@@ -95,6 +98,7 @@ async def word2pic(client: httpx.AsyncClient()) -> Tuple[str, Image.Image]:
 
 
 async def get_data(session: httpx.AsyncClient(), url: str, key: str) -> Tuple[str, dict]:
+    # 粉丝、大航海数据
     r = await session.get(url)
     if r.status_code == 200:
         js = r.json()
@@ -149,6 +153,7 @@ def circle_corner(img: Image.Image, radii: int = 0) -> Image.Image:  # 把原图
 
 
 async def makePic():
+    # 主函数 用于生成图片
     bg = Image.open(FOLDER+'bg.png')
     draw = ImageDraw.Draw(bg)
     font = lambda size: ImageFont.truetype(FOLDER+'HarmonyOS_Sans_SC_Regular.ttf', size)
@@ -159,7 +164,7 @@ async def makePic():
     basicData = [
         [],
         []
-    ]
+    ]  # “基础数据”栏的数据来源
 
     async with httpx.AsyncClient(headers=Headers) as session:
         pending = [
@@ -171,7 +176,7 @@ async def makePic():
         while pending:
             done, pending = await asyncio.wait(pending)
             for done_task in done:
-                code, data = await done_task
+                code, data = await done_task  # 根据异步函数返回的 code 码执行相应 callback
                 if code == 'wc':
                     wc = data[0].resize((900, 676), Image.ANTIALIAS)
                     bg.paste(wc, (90, 590), mask=wc.getchannel('A'))
@@ -201,21 +206,22 @@ async def makePic():
         [('礼物：', round(LIVEINFO["live"]['send_gift'], 2)), ('航海：', round(LIVEINFO["live"]['guard_buy'], 2)), ('醒目留言：', round(LIVEINFO["live"]['super_chat_message'], 2))],
     ] + basicData
 
-    for i, rows in enumerate(basicData):
+    for i, rows in enumerate(basicData):  # 写“基础数据”文字
         for j, data in enumerate(rows):
             draw.text((70+240*j, 329+51*i), data[0], fill=set_color, font=font(35))
             draw.text((70+240*j+35*len(data[0]), 329+51*i+4), str(data[1]), fill=set_color, font=font(32))
 
+    # 右上角立绘
     nanami = Image.open(f'{FOLDER}{randint(0,6)}.png')
     w = int(nanami.width*600/nanami.height)
     nanami = nanami.resize((w, 600), Image.ANTIALIAS)
-    body = nanami.crop((0, 0, w, 400))  # 不是跟身体切割了吗
+    body = nanami.crop((0, 0, w, 400))  # 不是跟身体切割了吗 上半身透明度保留
 
     a = body.getchannel('A')
     pix = a.load()
     for i in range(351, 400):
         for j in range(w):
-            pix[j, i] = int((8-0.02*i) * pix[j, i])
+            pix[j, i] = int((8-0.02*i) * pix[j, i])  # 下半部分透明度线性降低
 
     bg.paste(body, (885-w//2, 20), mask=a)
 
