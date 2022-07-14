@@ -6,7 +6,8 @@
  <img src="https://user-images.githubusercontent.com/41439182/179054554-3d37e270-77e0-4548-84ed-b6df088060c8.png" width="48%"/>
  
  
- ### 基于 HarmonyOS Sans 与 Adobe Photoshop CC 2020 利用 Python PIL 将直播数据转化为固定格式图片(场报)
+ ### 基于 HarmonyOS Sans 与 Adobe Photoshop CC 2020 
+ ### 利用 Python PIL 将直播数据转化为固定格式图片(场报)
 </div>
 
 ---
