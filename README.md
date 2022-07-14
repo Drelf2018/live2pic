@@ -2,8 +2,8 @@
 <div align="center">
 
  <br />
- <img src="https://user-images.githubusercontent.com/41439182/179054549-053d18b5-78ec-47ee-9f4d-1803f8eb1d71.png" height="320"/>
- <img src="https://user-images.githubusercontent.com/41439182/179054554-3d37e270-77e0-4548-84ed-b6df088060c8.png" height="320"/>
+ <img src="https://user-images.githubusercontent.com/41439182/179054549-053d18b5-78ec-47ee-9f4d-1803f8eb1d71.png" width="48%"/>
+ <img src="https://user-images.githubusercontent.com/41439182/179054554-3d37e270-77e0-4548-84ed-b6df088060c8.png" width="48%"/>
  
  
  ### 基于 HarmonyOS Sans 与 Adobe Photoshop CC 2020 利用 Python PIL 将直播数据转化为固定格式图片(场报)
