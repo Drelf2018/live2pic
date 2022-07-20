@@ -15,12 +15,16 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.style.use("ggplot")
 plt.rcParams['font.sans-serif'] = ['SimHei']
-fig, ax = plt.subplots(figsize=(12, 4))
+
+
 LIVELIVE: dict  # 直播数据
 
 
 @awaitable
 def get_data_fig(follower: dict, guardNum: dict):
+
+    fig, ax = plt.subplots(figsize=(12, 4))
+
     title = list(follower.keys())[::-1]
     follower = list(follower.values())[::-1]
     guardNum = list(guardNum.values())[::-1]
@@ -309,12 +313,9 @@ class Live2Pic:
                     if func:
                         pending.add(asyncio.create_task(func(data)))
 
-        # ('关注：', ' → '.join([str(d) for d in data.values()][::-1]))
         t2s = lambda tt: time.strftime('%m/%d %H:%M', time.localtime(tt))
         self.draw.text((70, 178), '标题：'+self.liveinfo["title"], fill=self.text_color, font=self.fontbd[32])
         self.draw.text((70, 228), f'时间：{t2s(self.liveinfo["st"])} - {t2s(self.liveinfo["sp"])}', fill=self.text_color, font=self.font[28])
-        # self.draw.text((240, 280), '关注 大航海为近五天数据', fill='grey', font=self.font[32])
-        # self.draw.text((240, 544), '出于个人爱好未将“妈妈”设为停止词', fill='grey', font=self.font[32])
         self.draw.text((600, 1290), '*数据来源：api.nana7mi.link', fill='grey', font=self.font[30])
         self.draw.text((290, 1440), '你们会无缘无故的发可爱，就代表哪天无缘无故发恶心', fill='grey', font=self.font[32])
 
@@ -323,8 +324,10 @@ class Live2Pic:
         self.draw.text((70, 490), '趋势图表', fill=self.text_color, font=self.fontbd[40])
         self.draw.text((70, 885), '弹幕词云', fill=self.text_color, font=self.fontbd[40])
 
+        total_income = self.liveinfo['send_gift'] + self.liveinfo['guard_buy'] + self.liveinfo['super_chat_message']
+
         basicData = [
-            [('弹幕：', self.liveinfo['total'], self.text_color), ('密度：', str(self.liveinfo['total']*60//(self.liveinfo['sp']-self.liveinfo['st']))+' / min', self.text_color)],
+            [('营收：', round(total_income, 2), self.text_color), ('弹幕：', self.liveinfo['total'], self.text_color), ('密度：', str(self.liveinfo['total']*60//(self.liveinfo['sp']-self.liveinfo['st']))+'/min', self.text_color)],
             [('礼物：', round(self.liveinfo['send_gift'], 2), (255, 168, 180)), ('航海：', round(self.liveinfo['guard_buy'], 2), (132, 212, 155)), ('醒目留言：', round(self.liveinfo['super_chat_message'], 2), (74, 194, 246))],
         ]
 
@@ -333,7 +336,6 @@ class Live2Pic:
                 self.draw.text((70+240*j, 329+51*i), data[0], fill=self.text_color, font=self.font[35])
                 self.draw.text((70+240*j+35*len(data[0]), 329+51*i+4), str(data[1]), fill=data[2], font=self.font[32])
 
-        total_income = self.liveinfo['send_gift'] + self.liveinfo['guard_buy'] + self.liveinfo['super_chat_message']
         income = Image.new('RGBA', (940, 50), (132, 212, 155))
         income.paste((255, 168, 180), (0, 0, int(940*self.liveinfo['send_gift']/total_income), 50))
         income.paste((74, 194, 246), (int(940*(total_income-self.liveinfo['super_chat_message'])/total_income), 0, 940, 50))
@@ -361,4 +363,5 @@ class Live2Pic:
 
 
 if __name__ == '__main__':
-    asyncio.run(Live2Pic().makePic()).save('live.png')
+    asyncio.run(Live2Pic().makePic()).show()
+    asyncio.run(Live2Pic().makePic()).show()
