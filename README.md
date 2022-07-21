@@ -23,4 +23,4 @@
 ---
 
 ### 效果图
-<img src="https://user-images.githubusercontent.com/41439182/179051746-6d5c14eb-8183-4fae-a02c-727605b5ae1f.png" height="600"/>
+<img src="https://github.com/Drelf2018/live2pic/blob/main/live.png" height="600"/>
